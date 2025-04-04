@@ -416,7 +416,7 @@
                             <div class="file-icon">
                                 {% if file.endswith('.pdf') %}
                                     📄
-                                {% elif file.endswith('.txt') %}
+                                {% elif file.endswith('.doc') %}
                                     📝
                                 {% elif file.endswith('.html') %}
                                     🌐
@@ -477,6 +477,22 @@
                         </svg>
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup-container" class="popup-container">
+        <div class="popup">
+            <div class="popup-header">
+                <span id="popup-title">Notification</span>
+                <span class="popup-close" onclick="closePopup()">&times;</span>
+            </div>
+            <div id="popup-content" class="popup-content">
+                <!-- Content will be added dynamically -->
+            </div>
+            <div class="popup-footer">
+                <button id="popup-confirm-btn" class="popup-btn popup-confirm-btn" onclick="confirmPopup()">OK</button>
+                <button id="popup-cancel-btn" class="popup-btn popup-cancel-btn" onclick="closePopup()">Cancel</button>
             </div>
         </div>
     </div>
