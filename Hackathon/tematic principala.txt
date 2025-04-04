@@ -1,0 +1,18 @@
+tematic principala: 
+
+			  Simulare examen :  Chestionar adaptive  : 
+
+Features
+
+Misiune :::: 
+
+///////////////////////////// STUDENT ///////////////////////////////
+-test adptiv pe baza raspusurilor gresite 
+-exemplificarea          (greselilor / corecte )
+-custom environment 
+-modele din anii trecut
+
+
+///////////////////////////////PROFESOR ///////////////////////////////////
+-generare teste pentru copii, teste custom 
+-
