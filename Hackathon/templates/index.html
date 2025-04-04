@@ -203,6 +203,193 @@
             background-color: #555;
             color: #fff;
         }
+
+        .chat-area {
+        display: flex;
+        flex-direction: column;
+        height: calc(100% - 40px);
+        }
+        
+        .messages-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: #1a1a1a;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.4;
+            position: relative;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message-row {
+            display: flex;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .user-message-row {
+            justify-content: flex-end;
+        }
+        
+        .ai-message-row {
+            justify-content: flex-start;
+        }
+        
+        .user-message {
+            background-color: #5773cc;
+            color: white;
+            border-radius: 18px 18px 0 18px;
+            align-self: flex-end;
+        }
+        
+        .ai-message {
+            background-color: #2a2a2a;
+            color: #ffffff;
+            border-radius: 18px 18px 18px 0;
+            align-self: flex-start;
+        }
+        
+        .message-content {
+            word-wrap: break-word;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .welcome-message {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .ai-avatar {
+            width: 32px;
+            height: 32px;
+            background-color: #5773cc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background-color: #777;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        /* Input area styles */
+        .input-area {
+            padding: 15px;
+            background-color: #1e1e1e;
+            border-top: 1px solid #333;
+            display: flex;
+            align-items: center;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .input-field {
+            flex-grow: 1;
+            background-color: #333;
+            border: none;
+            border-radius: 24px;
+            padding: 15px 20px;
+            color: #ffffff;
+            margin-right: 10px;
+            font-size: 15px;
+            transition: background-color 0.2s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            background-color: #444;
+        }
+        
+        .send-btn {
+            background-color: #5773cc;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        
+        .send-btn:hover {
+            background-color: #4a63b3;
+            transform: scale(1.05);
+        }
+        
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            background-color: #2a2a2a;
+            border-radius: 18px 18px 18px 0;
+            width: fit-content;
+            margin-top: 5px;
+        }
+        
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #777;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 1px;
+            animation: typing 1.3s infinite ease-in-out;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
     </style>
 </head>
 <body>
@@ -262,18 +449,33 @@
             </div>
         </div>
         
+        <!-- Updated chat section for index.html -->
         <div class="main-content">
             <div class="section-header">
                 <span>Conversație prin chat</span>
             </div>
             
             <div class="chat-area">
-                <div id="chat-messages" style="flex-grow: 1; overflow-y: auto; margin-bottom: 10px;">
+                <div id="chat-messages" class="messages-container">
                     <!-- Chat messages will appear here -->
+                    <div class="welcome-message">
+                        <div class="ai-avatar">AI</div>
+                        <div class="message ai-message">
+                            <div class="message-content">
+                                Bun venit! Încărcați fișiere în secțiunea „Surse" și apoi puteți adresa întrebări despre conținutul lor.
+                            </div>
+                            <div class="message-time">Acum</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="input-area">
                     <input type="text" id="chatInput" class="input-field" placeholder="Scrieți un mesaj...">
-                    <button class="send-btn" onclick="sendMessage()">➤</button>
+                    <button class="send-btn" onclick="sendMessage()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
@@ -370,6 +572,143 @@
                 console.error('Error:', error);
             });
         }
+        // Update the sendMessage function
+        function sendMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            if (!message) {
+                return;
+            }
+
+            const chatMessages = document.getElementById('chat-messages');
+            
+            // Add user message
+            const userMessageRow = document.createElement('div');
+            userMessageRow.className = 'message-row user-message-row';
+            
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'message user-message';
+            
+            const userMessageContent = document.createElement('div');
+            userMessageContent.className = 'message-content';
+            userMessageContent.textContent = message;
+            
+            const userMessageTime = document.createElement('div');
+            userMessageTime.className = 'message-time';
+            userMessageTime.textContent = getCurrentTime();
+            
+            userMessageDiv.appendChild(userMessageContent);
+            userMessageDiv.appendChild(userMessageTime);
+            userMessageRow.appendChild(userMessageDiv);
+            
+            chatMessages.appendChild(userMessageRow);
+            
+            // Show typing indicator
+            const typingRow = document.createElement('div');
+            typingRow.className = 'message-row ai-message-row';
+            typingRow.innerHTML = `
+                <div class="ai-avatar">AI</div>
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingRow);
+            
+            // Clear input field and scroll to bottom
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Send the message to the server
+            fetch('/submit_chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove typing indicator
+                chatMessages.removeChild(typingRow);
+                
+                if (data.success) {
+                    // Add AI message
+                    const aiMessageRow = document.createElement('div');
+                    aiMessageRow.className = 'message-row ai-message-row';
+                    
+                    const aiAvatar = document.createElement('div');
+                    aiAvatar.className = 'ai-avatar';
+                    aiAvatar.textContent = 'AI';
+                    
+                    const aiMessageDiv = document.createElement('div');
+                    aiMessageDiv.className = 'message ai-message';
+                    
+                    const aiMessageContent = document.createElement('div');
+                    aiMessageContent.className = 'message-content';
+                    aiMessageContent.textContent = data.ai_response;
+                    
+                    const aiMessageTime = document.createElement('div');
+                    aiMessageTime.className = 'message-time';
+                    aiMessageTime.textContent = getCurrentTime();
+                    
+                    aiMessageDiv.appendChild(aiMessageContent);
+                    aiMessageDiv.appendChild(aiMessageTime);
+                    
+                    aiMessageRow.appendChild(aiAvatar);
+                    aiMessageRow.appendChild(aiMessageDiv);
+                    
+                    chatMessages.appendChild(aiMessageRow);
+                    
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                } else {
+                    // Handle error
+                    const errorMessageRow = document.createElement('div');
+                    errorMessageRow.className = 'message-row ai-message-row';
+                    
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'message ai-message error-message';
+                    errorMessage.textContent = 'Eroare: ' + data.error;
+                    
+                    errorMessageRow.appendChild(errorMessage);
+                    chatMessages.appendChild(errorMessageRow);
+                }
+            })
+            .catch(error => {
+                // Remove typing indicator
+                chatMessages.removeChild(typingRow);
+                
+                // Show error message
+                const errorMessageRow = document.createElement('div');
+                errorMessageRow.className = 'message-row ai-message-row';
+                
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'message ai-message error-message';
+                errorMessage.textContent = 'Eroare de conexiune. Încercați din nou.';
+                
+                errorMessageRow.appendChild(errorMessage);
+                chatMessages.appendChild(errorMessageRow);
+                
+                console.error('Error:', error);
+            });
+        }
+        
+        // Function to get current time in HH:MM format
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+        
+        // Allow pressing Enter to send a message
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
     </script>
 </body>
 </html>
