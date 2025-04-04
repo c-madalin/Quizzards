@@ -218,7 +218,7 @@
                 <span>📋</span>
             </div>
             
-            <button class="add-button">
+            <button class="add-button" onclick="uploadFile()">
                 <span>➕</span> Adăugați sursa
             </button>
             
@@ -245,7 +245,7 @@
                                 <div class="file-name">{{ file }}</div>
                                 <div class="file-type">{{ file.split('.')[-1] | upper }}</div>
                             </div>
-                            <div class="delete-btn" title="Delete file">×</div>
+                            <div class="delete-btn" title="Delete file" onclick="deleteFile('{{ file }}')">×</div>
                         </div>
                     {% endfor %}
                 {% else %}
@@ -267,27 +267,19 @@
                 <span>Conversație prin chat</span>
             </div>
             
-            <div class="empty-state">
-                <div style="color: #888;">Adăugați o sursă pentru a începe</div>
-                <button class="upload-btn">Încărcați o sursă</button>
-            </div>
-            
-            <div class="input-area">
-                <input type="text" class="input-field" placeholder="Încărcați o sursă pentru a începe">
-                <button class="send-btn">➤</button>
+            <div class="chat-area">
+                <div id="chat-messages" style="flex-grow: 1; overflow-y: auto; margin-bottom: 10px;">
+                    <!-- Chat messages will appear here -->
+                </div>
+                <div class="input-area">
+                    <input type="text" id="chatInput" class="input-field" placeholder="Scrieți un mesaj...">
+                    <button class="send-btn" onclick="sendMessage()">➤</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        document.querySelector('.upload-btn').addEventListener('click', uploadFile);
-        document.querySelector('.add-button').addEventListener('click', uploadFile);
-        
-        // Add event listeners to existing delete buttons
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', handleDeleteClick);
-        });
-        
         function uploadFile() {
             const input = document.createElement('input');
             input.type = 'file';
@@ -304,10 +296,8 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // Add the new file to the file list
-                            addFileToList(data.filename, data.file_type);
-                            // Hide empty state if it was showing
-                            hideEmptyState();
+                            alert('File uploaded successfully: ' + data.filename);
+                            location.reload(); // Reload to update the file list
                         } else {
                             alert('Error: ' + data.error);
                         }
@@ -319,64 +309,9 @@
             };
             input.click();
         }
-        
-        function addFileToList(filename, fileType) {
-            const fileList = document.querySelector('.file-list');
-            
-            // Check if empty state is showing and remove it
-            const emptyState = fileList.querySelector('.empty-state');
-            if (emptyState) {
-                fileList.removeChild(emptyState);
-            }
-            
-            // Determine icon based on file type
-            let icon = '📁'; // Default
-            if (fileType === 'pdf') icon = '📄';
-            else if (fileType === 'txt') icon = '📝';
-            else if (fileType === 'html') icon = '🌐';
-            else if (fileType === 'mp4') icon = '🎬';
-            else if (fileType === 'mp3') icon = '🎵';
-            
-            // Create new file item element
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.dataset.filename = filename;
-            fileItem.innerHTML = `
-                <div class="file-icon">
-                    ${icon}
-                </div>
-                <div class="file-info">
-                    <div class="file-name">${filename}</div>
-                    <div class="file-type">${fileType.toUpperCase()}</div>
-                </div>
-                <div class="delete-btn" title="Delete file">×</div>
-            `;
-            
-            // Add click event to the file item (excluding the delete button)
-            fileItem.addEventListener('click', function(e) {
-                // Don't trigger if delete button was clicked
-                if (!e.target.classList.contains('delete-btn')) {
-                    console.log('Selected file:', filename);
-                    // Here you would typically update the chat interface or load the file
-                }
-            });
-            
-            // Add click event to the delete button
-            const deleteBtn = fileItem.querySelector('.delete-btn');
-            deleteBtn.addEventListener('click', handleDeleteClick);
-            
-            // Add to the file list
-            fileList.appendChild(fileItem);
-        }
-        
-        function handleDeleteClick(e) {
-            e.stopPropagation(); // Prevent triggering the file item click
-            
-            const fileItem = e.target.closest('.file-item');
-            const filename = fileItem.dataset.filename;
-            
+
+        function deleteFile(filename) {
             if (confirm(`Are you sure you want to delete "${filename}"?`)) {
-                // Send delete request to the server
                 fetch('/delete', {
                     method: 'POST',
                     headers: {
@@ -387,14 +322,8 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Remove the file item from the DOM
-                        fileItem.remove();
-                        
-                        // Check if this was the last file and show empty state if needed
-                        const fileList = document.querySelector('.file-list');
-                        if (!fileList.querySelector('.file-item')) {
-                            showEmptyState();
-                        }
+                        alert('File deleted successfully');
+                        location.reload(); // Reload to update the file list
                     } else {
                         alert('Error: ' + data.error);
                     }
@@ -404,47 +333,43 @@
                 });
             }
         }
-        
-        function hideEmptyState() {
-            const fileList = document.querySelector('.file-list');
-            const emptyState = fileList.querySelector('.empty-state');
-            if (emptyState) {
-                emptyState.style.display = 'none';
+
+        function sendMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            if (!message) {
+                alert('Please enter a message');
+                return;
             }
-        }
-        
-        function showEmptyState() {
-            const fileList = document.querySelector('.file-list');
-            
-            // Create empty state if it doesn't exist
-            if (!fileList.querySelector('.empty-state')) {
-                const emptyState = document.createElement('div');
-                emptyState.className = 'empty-state';
-                emptyState.innerHTML = `
-                    <div class="empty-icon">📄</div>
-                    <div>Sursele salvate vor apărea aici</div>
-                    <div style="margin-top: 10px; color: #888; font-size: 14px;">
-                        Dă clic mai sus pe Adaugă sursa pentru a adăuga
-                        fișiere PDF, site-uri, text, videoclipuri sau fișiere audio.
-                        Poți și să imporți un fișier direct din Google Drive.
-                    </div>
-                `;
-                fileList.appendChild(emptyState);
-            } else {
-                fileList.querySelector('.empty-state').style.display = 'flex';
-            }
-        }
-        
-        // Add click events to existing file items
-        document.querySelectorAll('.file-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                // Don't trigger if delete button was clicked
-                if (!e.target.classList.contains('delete-btn')) {
-                    console.log('Selected file:', this.dataset.filename);
-                    // Update UI as needed when file is selected
+
+            fetch('/submit_chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const chatMessages = document.getElementById('chat-messages');
+                    const userMessage = document.createElement('div');
+                    userMessage.textContent = 'You: ' + message;
+                    chatMessages.appendChild(userMessage);
+
+                    const aiMessage = document.createElement('div');
+                    aiMessage.textContent = 'AI: ' + data.ai_response;
+                    chatMessages.appendChild(aiMessage);
+
+                    chatInput.value = ''; // Clear input field
+                } else {
+                    alert('Error: ' + data.error);
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
-        });
+        }
     </script>
 </body>
 </html>
