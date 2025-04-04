@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notebook App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .header {
+            padding: 15px 20px;
+            background-color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        .logo {
+            width: 30px;
+            height: 30px;
+            background-color: #444;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .title {
+            font-size: 18px;
+            font-weight: normal;
+        }
+        .container {
+            display: flex;
+            height: calc(100vh - 61px);
+        }
+        .sidebar {
+            width: 35%;
+            padding: 15px;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            width: 65%;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5px;
+        }
+        .add-button {
+            background-color: transparent;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            width: 100%;
+            border-radius: 30px;
+            border: 1px solid #444;
+            margin: 15px 0;
+            transition: background-color 0.3s;
+        }
+        .add-button:hover {
+            background-color: #333;
+        }
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+        }
+        .empty-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        .upload-btn {
+            background-color: transparent;
+            border: 1px solid #444;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        .upload-btn:hover {
+            background-color: #333;
+        }
+        .input-area {
+            margin-top: auto;
+            padding: 15px;
+            background-color: #1a1a1a;
+            border-top: 1px solid #333;
+            display: flex;
+            align-items: center;
+        }
+        .input-field {
+            flex-grow: 1;
+            background-color: #333;
+            border: none;
+            border-radius: 30px;
+            padding: 15px;
+            color: #ffffff;
+            margin-right: 10px;
+        }
+        .send-btn {
+            background-color: #5773cc;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .sources-info {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-top: 20px;
+            padding: 0 20px;
+        }
+        
+        /* File list styles */
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+        .file-item:hover {
+            background-color: #333;
+        }
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        .file-info {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            max-width: calc(100% - 80px); /* Adjust for icon and delete button */
+        }
+        .file-name {
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .file-type {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        /* Delete button styles */
+        .delete-btn {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #444;
+            color: #aaa;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s, background-color 0.2s;
+            margin-left: 5px;
+        }
+        .file-item:hover .delete-btn {
+            opacity: 1;
+        }
+        .delete-btn:hover {
+            background-color: #555;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"></div>
+        <h1 class="title">Untitled notebook</h1>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div class="section-header">
+                <span>Surse</span>
+                <span>📋</span>
+            </div>
+            
+            <button class="add-button">
+                <span>➕</span> Adăugați sursa
+            </button>
+            
+            <div class="file-list">
+                {% if uploaded_files %}
+                    {% for file in uploaded_files %}
+                        <div class="file-item" data-filename="{{ file }}">
+                            <div class="file-icon">
+                                {% if file.endswith('.pdf') %}
+                                    📄
+                                {% elif file.endswith('.txt') %}
+                                    📝
+                                {% elif file.endswith('.html') %}
+                                    🌐
+                                {% elif file.endswith('.mp4') %}
+                                    🎬
+                                {% elif file.endswith('.mp3') %}
+                                    🎵
+                                {% else %}
+                                    📁
+                                {% endif %}
+                            </div>
+                            <div class="file-info">
+                                <div class="file-name">{{ file }}</div>
+                                <div class="file-type">{{ file.split('.')[-1] | upper }}</div>
+                            </div>
+                            <div class="delete-btn" title="Delete file">×</div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">📄</div>
+                        <div>Sursele salvate vor apărea aici</div>
+                        <div style="margin-top: 10px; color: #888; font-size: 14px;">
+                            Dă clic mai sus pe Adaugă sursa pentru a adăuga
+                            fișiere PDF, site-uri, text, videoclipuri sau fișiere audio.
+                            Poți și să imporți un fișier direct din Google Drive.
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="section-header">
+                <span>Conversație prin chat</span>
+            </div>
+            
+            <div class="empty-state">
+                <div style="color: #888;">Adăugați o sursă pentru a începe</div>
+                <button class="upload-btn">Încărcați o sursă</button>
+            </div>
+            
+            <div class="input-area">
+                <input type="text" class="input-field" placeholder="Încărcați o sursă pentru a începe">
+                <button class="send-btn">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.upload-btn').addEventListener('click', uploadFile);
+        document.querySelector('.add-button').addEventListener('click', uploadFile);
+        
+        // Add event listeners to existing delete buttons
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', handleDeleteClick);
+        });
+        
+        function uploadFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Add the new file to the file list
+                            addFileToList(data.filename, data.file_type);
+                            // Hide empty state if it was showing
+                            hideEmptyState();
+                        } else {
+                            alert('Error: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+            };
+            input.click();
+        }
+        
+        function addFileToList(filename, fileType) {
+            const fileList = document.querySelector('.file-list');
+            
+            // Check if empty state is showing and remove it
+            const emptyState = fileList.querySelector('.empty-state');
+            if (emptyState) {
+                fileList.removeChild(emptyState);
+            }
+            
+            // Determine icon based on file type
+            let icon = '📁'; // Default
+            if (fileType === 'pdf') icon = '📄';
+            else if (fileType === 'txt') icon = '📝';
+            else if (fileType === 'html') icon = '🌐';
+            else if (fileType === 'mp4') icon = '🎬';
+            else if (fileType === 'mp3') icon = '🎵';
+            
+            // Create new file item element
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.dataset.filename = filename;
+            fileItem.innerHTML = `
+                <div class="file-icon">
+                    ${icon}
+                </div>
+                <div class="file-info">
+                    <div class="file-name">${filename}</div>
+                    <div class="file-type">${fileType.toUpperCase()}</div>
+                </div>
+                <div class="delete-btn" title="Delete file">×</div>
+            `;
+            
+            // Add click event to the file item (excluding the delete button)
+            fileItem.addEventListener('click', function(e) {
+                // Don't trigger if delete button was clicked
+                if (!e.target.classList.contains('delete-btn')) {
+                    console.log('Selected file:', filename);
+                    // Here you would typically update the chat interface or load the file
+                }
+            });
+            
+            // Add click event to the delete button
+            const deleteBtn = fileItem.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', handleDeleteClick);
+            
+            // Add to the file list
+            fileList.appendChild(fileItem);
+        }
+        
+        function handleDeleteClick(e) {
+            e.stopPropagation(); // Prevent triggering the file item click
+            
+            const fileItem = e.target.closest('.file-item');
+            const filename = fileItem.dataset.filename;
+            
+            if (confirm(`Are you sure you want to delete "${filename}"?`)) {
+                // Send delete request to the server
+                fetch('/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ filename: filename })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the file item from the DOM
+                        fileItem.remove();
+                        
+                        // Check if this was the last file and show empty state if needed
+                        const fileList = document.querySelector('.file-list');
+                        if (!fileList.querySelector('.file-item')) {
+                            showEmptyState();
+                        }
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        }
+        
+        function hideEmptyState() {
+            const fileList = document.querySelector('.file-list');
+            const emptyState = fileList.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+        }
+        
+        function showEmptyState() {
+            const fileList = document.querySelector('.file-list');
+            
+            // Create empty state if it doesn't exist
+            if (!fileList.querySelector('.empty-state')) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'empty-state';
+                emptyState.innerHTML = `
+                    <div class="empty-icon">📄</div>
+                    <div>Sursele salvate vor apărea aici</div>
+                    <div style="margin-top: 10px; color: #888; font-size: 14px;">
+                        Dă clic mai sus pe Adaugă sursa pentru a adăuga
+                        fișiere PDF, site-uri, text, videoclipuri sau fișiere audio.
+                        Poți și să imporți un fișier direct din Google Drive.
+                    </div>
+                `;
+                fileList.appendChild(emptyState);
+            } else {
+                fileList.querySelector('.empty-state').style.display = 'flex';
+            }
+        }
+        
+        // Add click events to existing file items
+        document.querySelectorAll('.file-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Don't trigger if delete button was clicked
+                if (!e.target.classList.contains('delete-btn')) {
+                    console.log('Selected file:', this.dataset.filename);
+                    // Update UI as needed when file is selected
+                }
+            });
+        });
+    </script>
+</body>
+</html>
