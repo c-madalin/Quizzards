@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Test Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+        
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .upload-section {
+            text-align: center;
+            padding: 40px 20px;
+            border: 2px dashed #3498db;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+        
+        .upload-section.drag-over {
+            background-color: #e1f0fa;
+            border-color: #2980b9;
+        }
+        
+        .upload-section i {
+            font-size: 48px;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .upload-btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        .upload-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        .file-info {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .options-section {
+            margin-bottom: 30px;
+        }
+        
+        .options-section h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .option-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .option-label {
+            flex: 0 0 200px;
+            font-weight: 500;
+            color: #34495e;
+        }
+        
+        .option-input {
+            flex: 1;
+        }
+        
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .generate-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: block;
+            width: 100%;
+            font-weight: 600;
+        }
+        
+        .generate-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .generate-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .results-container {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .test-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .test-preview {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 30px;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .loader i {
+            font-size: 40px;
+            color: #3498db;
+            animation: spin 1s infinite linear;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .question {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .question-text {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .options {
+            margin-left: 20px;
+        }
+        
+        .option {
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+            background-color: #fadbd8;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AI Practice Test Generator</h1>
+        <p>Upload your lecture materials and generate customized practice tests</p>
+    </div>
+    
+    <div class="container">
+        <div class="upload-section" id="drop-area">
+            <i class="fas fa-file-upload"></i>
+            <h2>Upload Lecture Material</h2>
+            <p>Drag & drop your PDF or DOCX file here</p>
+            <label for="file-input" class="upload-btn">Choose File</label>
+            <input type="file" id="file-input" accept=".pdf,.docx">
+            <div class="file-info" id="file-info">No file selected</div>
+            <div class="error-message" id="file-error"></div>
+        </div>
+        
+        <div class="options-section">
+            <h3>Test Options</h3>
+            <div class="option-row">
+                <div class="option-label">Question Type:</div>
+                <div class="option-input">
+                    <select id="question-type">
+                        <option value="multiple-choice">Multiple Choice</option>
+                        <option value="true-false">True/False</option>
+                        <option value="short-answer">Short Answer</option>
+                        <option value="mixed">Mixed</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="option-row">
+                <div class="option-label">Number of Questions:</div>
+                <div class="option-input">
+                    <input type="number" id="question-count" min="5" max="50" value="10">
+                </div>
+            </div>
+            
+            <div class="option-row">
+                <div class="option-label">Difficulty Level:</div>
+                <div class="option-input">
+                    <select id="difficulty">
+                        <option value="easy">Easy</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="option-row">
+                <div class="option-label">Focus Areas (Optional):</div>
+                <div class="option-input">
+                    <input type="text" id="focus-areas" placeholder="E.g., key concepts, definitions, applications">
+                </div>
+            </div>
+        </div>
+        
+        <button class="generate-btn" id="generate-btn" disabled>Generate Practice Test</button>
+    </div>
+    
+    <div class="loader" id="loader">
+        <i class="fas fa-spinner"></i>
+        <p>Analyzing content and generating questions...</p>
+    </div>
+    
+    <div class="results-container" id="results">
+        <div class="test-controls">
+            <h2>Your Practice Test</h2>
+            <div>
+                <button class="btn btn-primary" id="download-btn"><i class="fas fa-download"></i> Download PDF</button>
+                <button class="btn btn-success" id="regenerate-btn"><i class="fas fa-sync-alt"></i> Regenerate</button>
+            </div>
+        </div>
+        
+        <div class="test-preview" id="test-preview">
+            <!-- Test content will be inserted here -->
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // File upload handling
+            const dropArea = $('#drop-area');
+            const fileInput = $('#file-input');
+            const fileInfo = $('#file-info');
+            const fileError = $('#file-error');
+            const generateBtn = $('#generate-btn');
+            const loader = $('#loader');
+            const results = $('#results');
+            const testPreview = $('#test-preview');
+            
+            // Prevent default behavior for drag events
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.on(eventName, preventDefaults);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            // Highlight drop area when file is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.on(eventName, highlight);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.on(eventName, unhighlight);
+            });
+            
+            function highlight() {
+                dropArea.addClass('drag-over');
+            }
+            
+            function unhighlight() {
+                dropArea.removeClass('drag-over');
+            }
+            
+            // Handle dropped files
+            dropArea.on('drop', handleDrop);
+            
+            function handleDrop(e) {
+                const dt = e.originalEvent.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+            
+            // Handle files from file input
+            fileInput.on('change', function() {
+                handleFiles(this.files);
+            });
+            
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    const file = files[0];
+                    validateFile(file);
+                }
+            }
+            
+            function validateFile(file) {
+                fileError.hide();
+                
+                // Check file type
+                const validTypes = [
+                    'application/pdf', 
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                ];
+                
+                if (!validTypes.includes(file.type)) {
+                    fileError.text('Please upload a PDF or DOCX file only.').show();
+                    fileInfo.text('No valid file selected');
+                    generateBtn.prop('disabled', true);
+                    return;
+                }
+                
+                // Check file size (max 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    fileError.text('File is too large. Maximum size is 10MB.').show();
+                    fileInfo.text('File too large');
+                    generateBtn.prop('disabled', true);
+                    return;
+                }
+                
+                // File is valid
+                fileInfo.html(`<strong>${file.name}</strong> (${formatFileSize(file.size)})`);
+                generateBtn.prop('disabled', false);
+            }
+            
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return bytes + ' bytes';
+                else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+                else return (bytes / 1048576).toFixed(1) + ' MB';
+            }
+            
+            // Generate test
+            generateBtn.on('click', function() {
+                // Show loader and hide results
+                loader.show();
+                results.hide();
+                
+                // Get test options
+                const options = {
+                    questionType: $('#question-type').val(),
+                    questionCount: $('#question-count').val(),
+                    difficulty: $('#difficulty').val(),
+                    focusAreas: $('#focus-areas').val()
+                };
+                
+                // Simulate API call with timeout
+                setTimeout(function() {
+                    generateTestQuestions(options);
+                    loader.hide();
+                    results.show();
+                    
+                    // Scroll to results
+                    $('html, body').animate({
+                        scrollTop: results.offset().top - 50
+                    }, 500);
+                }, 2000);
+            });
+            
+            // Regenerate test
+            $('#regenerate-btn').on('click', function() {
+                // Show loader and hide results
+                loader.show();
+                results.hide();
+                
+                // Get test options
+                const options = {
+                    questionType: $('#question-type').val(),
+                    questionCount: $('#question-count').val(),
+                    difficulty: $('#difficulty').val(),
+                    focusAreas: $('#focus-areas').val()
+                };
+                
+                // Simulate API call with timeout
+                setTimeout(function() {
+                    generateTestQuestions(options);
+                    loader.hide();
+                    results.show();
+                }, 1500);
+            });
+            
+            // Download test as PDF
+            $('#download-btn').on('click', function() {
+                alert('This would generate and download a PDF of the test in a real implementation.');
+            });
+            
+            // Generate sample test questions (replace with actual API call in production)
+            function generateTestQuestions(options) {
+                // This is placeholder content - in a real implementation, you would call your AI backend
+                const questionCount = parseInt(options.questionCount);
+                const questionType = options.questionType;
+                
+                let questionsHtml = `
+                    <div class="test-header">
+                        <h3>Practice Test</h3>
+                        <p>Based on your uploaded lecture materials</p>
+                        <p><strong>Difficulty:</strong> ${options.difficulty.charAt(0).toUpperCase() + options.difficulty.slice(1)}</p>
+                    </div>
+                    <hr>
+                `;
+                
+                // Generate sample questions based on type
+                for (let i = 1; i <= questionCount; i++) {
+                    let questionHtml = '';
+                    
+                    if (questionType === 'multiple-choice' || (questionType === 'mixed' && i % 3 !== 0)) {
+                        // Multiple choice question
+                        questionHtml = `
+                            <div class="question">
+                                <div class="question-text">${i}. Sample multiple choice question about the lecture content would appear here?</div>
+                                <div class="options">
+                                    <div class="option">a) First potential answer option</div>
+                                    <div class="option">b) Second potential answer option</div>
+                                    <div class="option">c) Third potential answer option</div>
+                                    <div class="option">d) Fourth potential answer option</div>
+                                </div>
+                            </div>
+                        `;
+                    } else if (questionType === 'true-false' || (questionType === 'mixed' && i % 3 === 0)) {
+                        // True/False question
+                        questionHtml = `
+                            <div class="question">
+                                <div class="question-text">${i}. Sample true/false statement about the lecture content would appear here.</div>
+                                <div class="options">
+                                    <div class="option">a) True</div>
+                                    <div class="option">b) False</div>
+                                </div>
+                            </div>
+                        `;
+                    } else if (questionType === 'short-answer') {
+                        // Short answer question
+                        questionHtml = `
+                            <div class="question">
+                                <div class="question-text">${i}. Sample short answer question about the lecture content would appear here?</div>
+                                <div class="options">
+                                    <div class="option"><em>Answer space: _______________________________</em></div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    questionsHtml += questionHtml;
+                }
+                
+                // Update the test preview with questions
+                testPreview.html(questionsHtml);
+            }
+        });
+    </script>
+</body>
+</html>
