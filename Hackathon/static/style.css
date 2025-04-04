@@ -1,0 +1,300 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+/* Header styles */
+.header {
+    padding: 15px 20px;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #333;
+}
+
+.logo {
+    width: 30px;
+    height: 30px;
+    background-color: #444;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.green-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.green-button:hover {
+    background-color: #218838;
+}
+
+/* Container styles */
+.container {
+    display: flex;
+    height: calc(100vh - 61px);
+}
+
+.sidebar {
+    width: 35%;
+    padding: 15px;
+    border-right: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    width: 65%;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Section header styles */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5px;
+}
+
+/* Add button styles */
+.add-button {
+    background-color: transparent;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    width: 100%;
+    border-radius: 30px;
+    border: 1px solid #444;
+    margin: 15px 0;
+    transition: background-color 0.3s;
+}
+
+.add-button:hover {
+    background-color: #333;
+}
+
+/* Empty state styles */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 40px;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.upload-btn {
+    background-color: transparent;
+    border: 1px solid #444;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.upload-btn:hover {
+    background-color: #333;
+}
+
+/* Input area styles */
+.input-area {
+    margin-top: auto;
+    padding: 15px;
+    background-color: #1a1a1a;
+    border-top: 1px solid #333;
+    display: flex;
+    align-items: center;
+}
+
+.input-field {
+    flex-grow: 1;
+    background-color: #333;
+    border: none;
+    border-radius: 30px;
+    padding: 15px;
+    color: #ffffff;
+    margin-right: 10px;
+}
+
+.send-btn {
+    background-color: #5773cc;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* File list styles */
+.file-list {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+}
+
+.file-item:hover {
+    background-color: #333;
+}
+
+.file-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.file-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    max-width: calc(100% - 80px); /* Adjust for icon and delete button */
+}
+
+.file-name {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-type {
+    font-size: 12px;
+    color: #888;
+}
+
+/* Delete button styles */
+.delete-btn {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #444;
+    color: #aaa;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s, background-color 0.2s;
+    margin-left: 5px;
+}
+
+.file-item:hover .delete-btn {
+    opacity: 1;
+}
+
+.delete-btn:hover {
+    background-color: #555;
+    color: #fff;
+}
+
+/* Menu styles */
+.menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100vh;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1000;
+    overflow-y: auto;
+    transition: right 0.3s;
+}
+
+.menu.open {
+    display: block;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #888;
+    cursor: pointer;
+    float: right;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: #4caf50;
+}
+
+select {
+    padding: 8px;
+}
+
+.menu p {
+    margin-top: 15px;
+    color: #555;
+}
