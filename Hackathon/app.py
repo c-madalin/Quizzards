@@ -16,7 +16,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Set your OpenAI API key
-openai.api_key = 'your_openai_api_key'
+openai.api_key = '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'
 
 # Helper function to check allowed file types
 def allowed_file(filename):
