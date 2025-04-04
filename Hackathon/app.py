@@ -124,7 +124,7 @@ def generate_test():
         response = openai.ChatCompletion.create(
             model="gpt-4",  # Use the desired model
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": "Tu esti un asistent AI care raspunde la intrebari pe baza continutuli fsierelor incarcate."},
                 {"role": "user", "content": chat_input}
             ]
         )
