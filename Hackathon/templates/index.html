@@ -15,7 +15,7 @@
         </div>
         <button class="green-button" onclick="toggleMenu()">Test properties</button>
     </div>
-
+    
     <div class="menu" id="menu">
         <button class="close-btn" onclick="toggleMenu()">×</button>
         
@@ -41,7 +41,6 @@
         <input type="number" id="testDuration" placeholder="Enter minutes" min="1" step="1">
     </div>
     
-    
     <div class="container">
         <div class="sidebar">
             <div class="section-header">
@@ -60,7 +59,7 @@
                             <div class="file-icon">
                                 {% if file.endswith('.pdf') %}
                                     📄
-                                {% elif file.endswith('.txt') %}
+                                {% elif file.endswith('.doc') %}
                                     📝
                                 {% elif file.endswith('.html') %}
                                     🌐
@@ -93,19 +92,51 @@
             </div>
         </div>
         
+        <!-- Updated chat section -->
         <div class="main-content">
             <div class="section-header">
                 <span>Conversație prin chat</span>
             </div>
             
             <div class="chat-area">
-                <div id="chat-messages" style="flex-grow: 1; overflow-y: auto; margin-bottom: 10px;">
+                <div id="chat-messages" class="messages-container">
                     <!-- Chat messages will appear here -->
+                    <div class="welcome-message">
+                        <div class="ai-avatar">AI</div>
+                        <div class="message ai-message">
+                            <div class="message-content">
+                                Bun venit! Încărcați fișiere în secțiunea „Surse" și apoi puteți adresa întrebări despre conținutul lor.
+                            </div>
+                            <div class="message-time">Acum</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="input-area">
                     <input type="text" id="chatInput" class="input-field" placeholder="Scrieți un mesaj...">
-                    <button class="send-btn" onclick="sendMessage()">➤</button>
+                    <button class="send-btn" onclick="sendMessage()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom popup container -->
+    <div id="popup-container" class="popup-container">
+        <div class="popup">
+            <div class="popup-header">
+                <span id="popup-title">Notification</span>
+                <span class="popup-close" onclick="closePopup()">&times;</span>
+            </div>
+            <div id="popup-content" class="popup-content">
+                <!-- Content will be added dynamically -->
+            </div>
+            <div class="popup-footer">
+                <button id="popup-confirm-btn" class="popup-btn popup-confirm-btn" onclick="confirmPopup()">OK</button>
+                <button id="popup-cancel-btn" class="popup-btn popup-cancel-btn" onclick="closePopup()">Cancel</button>
             </div>
         </div>
     </div>
