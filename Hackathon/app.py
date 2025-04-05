@@ -99,7 +99,7 @@ def submit_chat():
         response = client.chat.completions.create(
             model="gpt-4",  # Use the desired model
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": "Esti un asistent AI care raspunde la intrebari pe baza continutului fsierelor incarcate."},
                 {"role": "user", "content": chat_input}
             ]
         )

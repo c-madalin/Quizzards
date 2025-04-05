@@ -1,24 +1,13 @@
-/* General styles */
+html, body {
+    overflow: hidden;
+    height: 100%;
+}
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #1a1a1a;
     color: #ffffff;
-}
-.header {
-    padding: 15px 20px;
-    background-color: #1a1a1a;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #333;
-}
-.logo {
-    width: 30px;
-    height: 30px;
-    background-color: #444;
-    border-radius: 50%;
-    margin-right: 15px;
 }
 .title {
     font-size: 18px;
@@ -466,7 +455,7 @@ body {
     position: fixed;
     top: 0;
     right: 0;
-    width: 300px;
+    width: 400px;
     height: 100vh;
     background-color: #333;
     color: white;
@@ -480,7 +469,8 @@ body {
 }
 
 .menu.open {
-    display: block;
+    display: flex;
+    flex-direction: column;
 }
 
 .close-btn {
@@ -527,12 +517,11 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
     color: #ccc;
 }
 
-
-.green-button {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #28a745; /* Base green */
+.generate-test-menu-button {
+    padding-right: 200px;
+}
+  .generate-quiz {
+    background-color: #28a745;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -541,9 +530,40 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
     border-radius: 5px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
-  }
-  
-  .green-button:hover {
-    background-color: #34c759; /* Brighter green on hover */
-  }
-  
+    margin-top: 20px;
+}
+
+.generate-quiz:hover {
+    background-color: #34c759;
+}
+
+.header {
+    padding: 15px 20px;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* space between title and buttons */
+    border-bottom: 1px solid #333;
+}
+
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 40px; /* adjust spacing between buttons */
+}
+
+.menu-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+.menu-button:hover {
+    background-color: #34c759;
+}

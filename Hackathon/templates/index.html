@@ -9,37 +9,45 @@
 </head>
 <body>
     <div class="header">
-        <div style="display: flex; align-items: center;">
-            <div class="logo"></div>
-            <h1 class="title">Untitled notebook</h1>
+        <div class="header-title">
+            <h1 class="title">Quizzard</h1>
         </div>
-        <button class="green-button" onclick="toggleMenu()">Test properties</button>
+        <div class="header-buttons">
+            <button class="menu-button" onclick="startTest()">Incepe test</button>
+            <button class="menu-button" onclick="toggleMenu()">Genereaza test</button>
+        </div>
     </div>
+    
     
     <div class="menu" id="menu">
         <button class="close-btn" onclick="toggleMenu()">×</button>
+    
+        <div class="menu-content">
+            <label for="questionType">Question Type:</label>
+            <select id="questionType">
+                <option value="TrueFalse">True/False</option>
+                <option value="SingleChoice">Single Choice</option>
+                <option value="MultipleChoice">Multiple Choice</option>
+            </select>  
         
-        <label for="questionType">Question Type:</label>
-        <select id="questionType">
-            <option value="TrueFalse">True/False</option>
-            <option value="SingleChoice">Single Choice</option>
-            <option value="MultipleChoice">Multiple Choice</option>
-        </select>
+            <label for="topic">Topic:</label>
+            <input type="text" id="topic" placeholder="Enter topic...">
+        
+            <label for="numQuestions">Number of Questions:</label>
+            <select id="numQuestions">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select>
+        
+            <label for="testDuration">Test Duration (minutes):</label>
+            <input type="number" id="testDuration" placeholder="Enter minutes" min="1" step="1">
+        </div>
     
-        <label for="topic">Topic:</label>
-        <input type="text" id="topic" placeholder="Enter topic...">
-    
-        <label for="numQuestions">Number of Questions:</label>
-        <select id="numQuestions">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
-        </select>
-    
-        <label for="testDuration">Test Duration (minutes):</label>
-        <input type="number" id="testDuration" placeholder="Enter minutes" min="1" step="1">
+        <button class="generate-quiz">Genereaza</button>
     </div>
+    
     
     <div class="container">
         <div class="sidebar">
