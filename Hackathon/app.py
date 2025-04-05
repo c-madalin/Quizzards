@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify, session
-import os
+import os, json, requests
 from openai import OpenAI
 from werkzeug.utils import secure_filename
 
@@ -94,26 +94,46 @@ def submit_chat():
     chat_input = data['message']
     session['chat_input'] = chat_input
 
-    try:
-        # Send the chat input to the OpenAI API using the new client
-        response = client.chat.completions.create(
-            model="gpt-4",  # Use the desired model
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": chat_input}
-            ]
-        )
+    # try:
+    #     # Send the chat input to the OpenAI API using the new client
+    #     response = client.chat.completions.create(
+    #         model="gpt-4",  # Use the desired model
+    #         messages=[
+    #             {"role": "system", "content": "You are a helpful assistant."},
+    #             {"role": "user", "content": chat_input}
+    #         ]
+    #     )
+    #
+    #     # Extract the AI's response
+    #     ai_response = response.choices[0].message.content
+    #
+    #     return jsonify({
+    #         'success': True,
+    #         'received_message': chat_input,
+    #         'ai_response': ai_response
+    #     })
+    # except Exception as e:
+    #     return jsonify({'error': f'Error communicating with AI: {str(e)}'}), 500
 
-        # Extract the AI's response
-        ai_response = response.choices[0].message.content
 
-        return jsonify({
-            'success': True,
-            'received_message': chat_input,
-            'ai_response': ai_response
-        })
-    except Exception as e:
-        return jsonify({'error': f'Error communicating with AI: {str(e)}'}), 500
+    url = "http://localhost:5001/api/rag/query"
+
+    payload = json.dumps({
+        "query": chat_input
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+    ai_response = response.json()["response"]
+
+    return jsonify({
+                            'success': True,
+                            'received_message': chat_input,
+                            'ai_response': ai_response
+                     })
+
 
 
 @app.route('/generate_test', methods=['POST'])

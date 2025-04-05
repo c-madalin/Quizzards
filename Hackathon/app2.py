@@ -17,7 +17,7 @@ app = Flask(__name__)
 UPLOAD_FOLDER = './uploads'
 VECTORDB_PATH = './chroma_db'
 OLLAMA_URL = 'http://localhost:11434/api/generate'
-DEFAULT_MODEL = 'gemma:2b'
+DEFAULT_MODEL = 'mistral'
 OLLAMA_BASE_URL = 'http://localhost:11434'
 
 # Ensure upload directory exists
@@ -166,8 +166,8 @@ def process_documents(directory_path):
 
     # Split documents into chunks
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=200
+        chunk_size=600,
+        chunk_overlap=300
     )
     chunks = text_splitter.split_documents(documents)
 
