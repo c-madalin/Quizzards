@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notebook App</title>
+
+    <link rel="stylesheet" href="/static/style.css" />
+    <style>
+      .test-modal-container {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .test-modal {
+        background-color: rgb(0, 0, 0);
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        width: 80%;
+        max-width: 700px;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 20px;
+      }
+
+      .test-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .test-modal-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .test-modal-close {
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 5px;
+      }
+
+      .test-question {
+        margin-bottom: 20px;
+      }
+
+      .question-text {
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin-bottom: 15px;
+      }
+
+      .answer-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .answer-option {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .answer-option:hover {
+        background-color: #f5f5f5;
+      }
+
+      .answer-option input {
+        margin-right: 10px;
+      }
+
+      .test-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+      }
+
+      .nav-button {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 4px;
+        background-color: #4a6ea9;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .nav-button:hover {
+        background-color: #3b5998;
+      }
+
+      .nav-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+
+      .question-counter {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #666;
+      }
+
+      footer {
+        padding: 15px;
+        text-align: center;
+        border-top: 1px solid #3b5998;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        height: 20px;
+        width: auto;
+        color: #6c757d;
+        border-radius: 0, 0 , 0.5px, 0.5px;
+      }
+    </style>
+    <script src="/static/script.js"></script>
+  </head>
+  <body>
+    <div id="test-modal-container" class="test-modal-container">
+      <div class="test-modal">
+        <div class="test-modal-header">
+          <div class="test-modal-title">Test</div>
+          <span class="test-modal-close" onclick="closeTestModal()"
+            >&times;</span
+          >
+        </div>
+        <div id="test-content">
+          <!-- Question content will be loaded here dynamically -->
+        </div>
+        <div class="test-navigation">
+          <button class="nav-button" id="prev-question">Ieșire</button>
+          <div class="question-counter">Întrebarea 1</div>
+          <button class="nav-button" id="next-question">Următoare</button>
+        </div>
+      </div>
+    </div>
+    <div class="header">
+      <div class="header-title">
+        <h1 class="title">Quizzard</h1>
+      </div>
+      <div class="header-buttons">
+        <button class="menu-button" onclick="startTest()">Incepe test</button>
+        <button class="menu-button" onclick="toggleMenu()">
+          Genereaza test
+        </button>
+      </div>
+    </div>
+
+    <div class="menu" id="menu">
+      <button class="close-btn" onclick="toggleMenu()">×</button>
+
+      <div class="menu-content">
+        <label for="questionType">Question Type:</label>
+        <select id="questionType">
+          <option value="TrueFalse">True/False</option>
+          <option value="SingleChoice">Single Choice</option>
+          <option value="MultipleChoice">Multiple Choice</option>
+        </select>
+
+        <label for="topic">Topic:</label>
+        <input type="text" id="topic" placeholder="Enter topic" />
+
+        <label for="numQuestions">Number of Questions:</label>
+        <select id="numQuestions">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+        </select>
+
+        <!-- <label for="testDuration">Test Duration (minutes):</label>
+            <input type="number" id="testDuration" placeholder="Enter minutes" min="1" step="1"> -->
+      </div>
+
+      <button class="generate-quiz">Genereaza</button>
+    </div>
+
+    <div class="container">
+      <div class="sidebar">
+        <div class="section-header">
+          <span>Surse</span>
+          <span>📋</span>
+        </div>
+
+        <button class="add-button" onclick="uploadFile()">
+          <span>➕</span> Adăugați sursa
+        </button>
+
+        <div class="file-list">
+          {% if uploaded_files %} {% for file in uploaded_files %}
+          <div class="file-item" data-filename="{{ file }}">
+            <div class="file-icon">
+              {% if file.endswith('.pdf') %} 📄 {% elif file.endswith('.doc') %}
+              📝 {% elif file.endswith('.html') %} 🌐 {% elif
+              file.endswith('.mp4') %} 🎬 {% elif file.endswith('.mp3') %} 🎵 {%
+              else %} 📁 {% endif %}
+            </div>
+            <div class="file-info">
+              <div class="file-name">{{ file }}</div>
+              <div class="file-type">{{ file.split('.')[-1] | upper }}</div>
+            </div>
+            <div
+              class="delete-btn"
+              title="Delete file"
+              onclick="deleteFile('{{ file }}')"
+            >
+              ×
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <div class="empty-state">
+            <div class="empty-icon">📄</div>
+            <div>Sursele salvate vor apărea aici</div>
+            <div style="margin-top: 10px; color: #888; font-size: 14px">
+              Dă clic mai sus pe Adaugă sursa pentru a adăuga fișiere PDF,
+              site-uri, text, videoclipuri sau fișiere audio. Poți și să imporți
+              un fișier direct din Google Drive.
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Updated chat section -->
+      <div class="main-content">
+        <div class="section-header">
+          <span>Conversație prin chat</span>
+        </div>
+
+        <div class="chat-area">
+          <div id="chat-messages" class="messages-container">
+            <!-- Chat messages will appear here -->
+            <div class="welcome-message">
+              <div class="ai-avatar">AI</div>
+              <div class="message ai-message">
+                <div class="message-content">
+                  Bun venit! Încărcați fișiere în secțiunea „Surse" și apoi
+                  puteți adresa întrebări despre conținutul lor.
+                </div>
+                <div class="message-time">Acum</div>
+              </div>
+            </div>
+          </div>
+          <div class="input-area">
+            <input
+              type="text"
+              id="chatInput"
+              class="input-field"
+              placeholder="Scrieți un mesaj..."
+            />
+            <button class="send-btn" onclick="sendMessage()">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M22 2L11 13"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M22 2L15 22L11 13L2 9L22 2Z"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+          <footer>
+            Quizzard can make mistakes. Check important info. Quizzard made by QuizzardsTeam ❤️
+        </footer>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom popup container -->
+    <div id="popup-container" class="popup-container">
+      <div class="popup">
+        <div class="popup-header">
+          <span id="popup-title">Notification</span>
+          <span class="popup-close" onclick="closePopup()">&times;</span>
+        </div>
+        <div id="popup-content" class="popup-content">
+          <!-- Content will be added dynamically -->
+        </div>
+        <div class="popup-footer">
+          <button
+            id="popup-confirm-btn"
+            class="popup-btn popup-confirm-btn"
+            onclick="confirmPopup()"
+          >
+            OK
+          </button>
+          <button
+            id="popup-cancel-btn"
+            class="popup-btn popup-cancel-btn"
+            onclick="closePopup()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </body>
+  <script>
+    // Add this to your script.js file
+
+    // Wait for DOM to be fully loaded before attaching event listeners
+    document.addEventListener("DOMContentLoaded", function () {
+      initializeGenerateTestListener();
+    });
+
+    // Function to initialize the generate test button listener
+    function initializeGenerateTestListener() {
+      // Find the generate quiz button and add click event listener
+      const generateButton = document.querySelector(".generate-quiz");
+      if (generateButton) {
+        generateButton.addEventListener("click", generateTest);
+      } else {
+        // If button isn't available yet, try again after a short delay
+        setTimeout(initializeGenerateTestListener, 100);
+      }
+    }
+
+    // Function to generate test based on selected options
+    function generateTest() {
+      // Get values from input fields
+      const questionType = document.getElementById("questionType").value;
+      const topic = document.getElementById("topic").value;
+      const numQuestions = document.getElementById("numQuestions").value;
+
+      // Validate input
+      if (!topic.trim()) {
+        showPopup("Error", "Please enter a topic for the test.", true);
+        return;
+      }
+
+      // Prepare data for POST request
+      const testData = {
+        questionType: questionType,
+        topic: topic,
+        numQuestions: numQuestions,
+      };
+
+      // Show loading state
+      showPopup(
+        "Generating Test",
+        "Please wait while we generate your test...",
+        false,
+        false
+      );
+
+      // Make POST request to /genereaza-test
+      fetch("/genereaza-test", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(testData),
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        showPopup("Success", "Test generated successfully!", true);
+
+        console.log("Test generated:", response.json());
+        closePopup();
+        window.open("http://localhost:5000/download", "_blank");
+        return response;
+      });
+    }
+
+    // Helper function to show popup with custom message
+    function showPopup(title, message, showConfirm = true, showCancel = false) {
+      const popupContainer = document.getElementById("popup-container");
+      const popupTitle = document.getElementById("popup-title");
+      const popupContent = document.getElementById("popup-content");
+      const confirmBtn = document.getElementById("popup-confirm-btn");
+      const cancelBtn = document.getElementById("popup-cancel-btn");
+
+      popupTitle.textContent = title;
+      popupContent.textContent = message;
+
+      // Show/hide buttons as needed
+      confirmBtn.style.display = showConfirm ? "block" : "none";
+      cancelBtn.style.display = showCancel ? "block" : "none";
+
+      // Show the popup
+      popupContainer.style.display = "flex";
+    }
+
+    // Add these functions if they don't already exist in your script.js
+
+    // Function to confirm popup action
+    function confirmPopup() {
+      closePopup();
+      // You can add additional actions here if needed
+    }
+
+    // Function to close the popup
+    function closePopup() {
+      const popupContainer = document.getElementById("popup-container");
+      popupContainer.style.display = "none";
+    }
+
+    function startTest() {
+      // Show loading indicator or message
+      const testContent = document.getElementById("test-content");
+      testContent.innerHTML =
+        '<div class="loading-indicator">Loading questions...</div>';
+
+      // Make the modal visible
+      document.getElementById("test-modal-container").style.display = "flex";
+
+      // Make POST request to fetch test questions
+      fetch("/genereaza-intrebare", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          // You can add any required parameters here
+          // For example: topic, difficulty, etc.
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Assuming the API returns a data structure with questions and answers
+          displayTestQuestions(data);
+
+          // Update question counter
+          updateQuestionCounter(1, data.questions ? data.questions.length : 0);
+        })
+        .catch((error) => {
+          console.error("Error fetching test questions:", error);
+          testContent.innerHTML =
+            '<div class="error-message">Failed to load questions. Please try again.</div>';
+        });
+    }
+
+    // Function to display test questions in the modal
+    function displayTestQuestions(data) {
+      const testContent = document.getElementById("test-content");
+
+      // Clear previous content
+      testContent.innerHTML = "";
+
+      // Check if we have questions
+      if (!data.questions || data.questions.length === 0) {
+        testContent.innerHTML =
+          '<div class="error-message">No questions available.</div>';
+        return;
+      }
+
+      // Display the first question
+      const firstQuestion = data.questions[0];
+
+      // Create question element
+      const questionElement = document.createElement("div");
+      questionElement.className = "test-question";
+
+      // Add question text
+      const questionText = document.createElement("div");
+      questionText.className = "question-text";
+      questionText.textContent = firstQuestion.text;
+      questionElement.appendChild(questionText);
+
+      // Add answer options
+      const answerOptions = document.createElement("div");
+      answerOptions.className = "answer-options";
+
+      // Create radio buttons for each answer option
+      firstQuestion.options.forEach((option, index) => {
+        const label = document.createElement("label");
+        label.className = "answer-option";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "question1";
+        input.value = String.fromCharCode(97 + index); // a, b, c, d...
+
+        const span = document.createElement("span");
+        span.textContent = `${String.fromCharCode(65 + index)}. ${option}`; // A, B, C, D...
+
+        label.appendChild(input);
+        label.appendChild(span);
+        answerOptions.appendChild(label);
+      });
+
+      questionElement.appendChild(answerOptions);
+      testContent.appendChild(questionElement);
+
+      // Store all questions in a data attribute or in a variable for navigation
+      testContent.dataset.questions = JSON.stringify(data.questions);
+      testContent.dataset.currentQuestionIndex = "0";
+    }
+
+    // Function to update the question counter
+    function updateQuestionCounter(current, total) {
+      const questionCounter = document.querySelector(".question-counter");
+      if (questionCounter) {
+        questionCounter.textContent = `Întrebarea ${current} din ${total}`;
+      }
+
+      // Enable/disable navigation buttons
+      const prevButton = document.getElementById("prev-question");
+      const nextButton = document.getElementById("next-question");
+    }
+
+    // Add event listener for the Escape key to close the modal
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        closeTestModal();
+      }
+    });
+
+    // Prevent clicks inside the modal from closing it
+    document
+      .querySelector(".test-modal")
+      .addEventListener("click", function (event) {
+        event.stopPropagation();
+      });
+
+    // Close modal when clicking outside of it
+    document
+      .getElementById("test-modal-container")
+      .addEventListener("click", function () {
+        closeTestModal();
+      });
+
+    // Navigation button functionality
+    document
+      .getElementById("next-question")
+      .addEventListener("click", function () {
+        // This would be replaced with actual logic to navigate to the next question
+        //alert("Navigate to next question");
+
+        const testContent = document.getElementById("test-content");
+        testContent.innerHTML =
+          '<div class="loading-indicator">Loading questions...</div>';
+
+        // Make the modal visible
+        document.getElementById("test-modal-container").style.display = "flex";
+
+        fetch("/genereaza-intrebare", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query:
+              "Generate a multiple choice question with 4 choices. Mark the correct answer.",
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            // Process and display the question
+            processAndDisplayQuestion(data);
+          })
+          .catch((error) => {
+            console.error("Error fetching test question:", error);
+            testContent.innerHTML =
+              '<div class="error-message">Failed to load question. Please try again.</div>';
+          });
+      });
+
+    document
+      .getElementById("prev-question")
+      .addEventListener("click", function () {
+        // This would be replaced with actual logic to navigate to the previous question
+        //alert("Navigate to previous question");
+      });
+
+    // Add this to the end of your existing script tag
+    // Functions for the "Incepe test" button functionality
+
+    function startTest() {
+      // Show loading indicator or message
+      const testContent = document.getElementById("test-content");
+      testContent.innerHTML =
+        '<div class="loading-indicator">Loading question...</div>';
+
+      // Make the modal visible
+      document.getElementById("test-modal-container").style.display = "flex";
+
+      // Make POST request to fetch test questions with the specific prompt
+      fetch("/genereaza-intrebare", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query:
+            "Generate a multiple choice question with 4 choices. Mark the correct answer.",
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Process and display the question
+          processAndDisplayQuestion(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching test question:", error);
+          testContent.innerHTML =
+            '<div class="error-message">Failed to load question. Please try again.</div>';
+        });
+    }
+
+    // Function to process the AI response and display the question
+    function processAndDisplayQuestion(data) {
+      const testContent = document.getElementById("test-content");
+
+      // Check if we have a response
+      if (!data || data.success === false) {
+        testContent.innerHTML =
+          '<div class="error-message">No question available.</div>';
+        return;
+      }
+
+      // Get the AI response text
+      const aiResponse = data.data;
+      console.log("AI Response:", aiResponse);
+
+      // Parse the AI response to extract question and options
+      const questionData = parseQuestionFromText(aiResponse);
+
+      if (!questionData) {
+        console.error("Failed to parse question from AI response");
+        testContent.innerHTML =
+          '<div class="error-message">Failed to parse question. Please try again.</div>';
+        return;
+      }
+
+      // Display the question
+      displayQuestion(questionData);
+
+      // Update question counter
+      updateQuestionCounter(1, 1); // Only one question for now
+    }
+
+    // Function to parse a question from AI-generated text
+    function parseQuestionFromText(text) {
+      try {
+        // Basic structure for the result
+        const result = {
+          text: "",
+          options: [],
+          correct_answer: [],
+        };
+
+        // Split the text into lines for processing
+        const lines = text
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line);
+
+        // Extract the question text
+        // Usually, the question text comes before the options
+        let questionTextLines = [];
+        let i = 0;
+
+        // Collect lines until we hit what looks like an option
+        while (i < lines.length && !lines[i].match(/^[A-D][\.:\)]/)) {
+          questionTextLines.push(lines[i]);
+          i++;
+        }
+
+        // Join the question text lines
+        result.text = questionTextLines.join(" ");
+
+        // Look for options (usually start with A., B., etc.)
+        const optionPattern = /^([A-D])[\.:\)](.+)/i;
+        const correctPattern = /correct answer[s]?[\s:]*([A-D])/i;
+
+        // Process remaining lines for options and correct answer
+        for (; i < lines.length; i++) {
+          const line = lines[i];
+
+          // Check if this line is an option
+          const optionMatch = line.match(optionPattern);
+          if (optionMatch) {
+            const optionId = optionMatch[1].toUpperCase();
+            const optionText = optionMatch[2].trim();
+
+            result.options.push({
+              id: optionId,
+              text: optionText,
+            });
+
+            // If option contains markers like "correct" or "*", it might be the answer
+            if (
+              optionText.toLowerCase().includes("correct") ||
+              optionText.includes("*") ||
+              line.includes("(correct)")
+            ) {
+              result.correct_answer.push(optionId);
+            }
+            continue;
+          }
+
+          // Check if this line indicates the correct answer
+          const correctMatch = line.match(correctPattern);
+          if (correctMatch) {
+            const answerId = correctMatch[1].toUpperCase();
+            if (!result.correct_answer.includes(answerId)) {
+              result.correct_answer.push(answerId);
+            }
+          }
+        }
+
+        // If we couldn't determine the correct answer but have options,
+        // default to the first option (for testing purposes)
+        if (result.correct_answer.length === 0 && result.options.length > 0) {
+          result.correct_answer.push(result.options[0].id);
+        }
+
+        // If we found options and a question, return the result
+        if (result.options.length > 0 && result.text) {
+          return result;
+        }
+
+        // If parsing failed, try to create question from the full text
+        console.log("Could not parse question properly, using fallback method");
+
+        // Last resort - just use the first line as the question
+        if (lines.length > 0) {
+          return {
+            text: lines[0],
+            options: [
+              {
+                id: "A",
+                text:
+                  lines.length > 1
+                    ? lines[1].replace(/^A[\.:\)]/, "").trim()
+                    : "Option A",
+              },
+              {
+                id: "B",
+                text:
+                  lines.length > 2
+                    ? lines[2].replace(/^B[\.:\)]/, "").trim()
+                    : "Option B",
+              },
+              {
+                id: "C",
+                text:
+                  lines.length > 3
+                    ? lines[3].replace(/^C[\.:\)]/, "").trim()
+                    : "Option C",
+              },
+              {
+                id: "D",
+                text:
+                  lines.length > 4
+                    ? lines[4].replace(/^D[\.:\)]/, "").trim()
+                    : "Option D",
+              },
+            ],
+            correct_answer: ["A"],
+          };
+        }
+
+        // Absolute fallback
+        return {
+          text:
+            "Question could not be parsed. Here's the raw text: " +
+            text.substring(0, 100) +
+            "...",
+          options: [
+            { id: "A", text: "Option A" },
+            { id: "B", text: "Option B" },
+            { id: "C", text: "Option C" },
+            { id: "D", text: "Option D" },
+          ],
+          correct_answer: ["A"],
+        };
+      } catch (error) {
+        console.error("Error parsing question:", error);
+        return {
+          text: "Error parsing question: " + error.message,
+          options: [
+            { id: "A", text: "Option A" },
+            { id: "B", text: "Option B" },
+            { id: "C", text: "Option C" },
+            { id: "D", text: "Option D" },
+          ],
+          correct_answer: ["A"],
+        };
+      }
+    }
+
+    // Function to display a single question
+    function displayQuestion(question) {
+      const testContent = document.getElementById("test-content");
+
+      // Clear previous content
+      testContent.innerHTML = "";
+
+      // Create question element
+      const questionElement = document.createElement("div");
+      questionElement.className = "test-question";
+
+      // Add question text
+      const questionText = document.createElement("div");
+      questionText.className = "question-text";
+      questionText.textContent = question.text;
+      questionElement.appendChild(questionText);
+
+      // Add answer options
+      const answerOptions = document.createElement("div");
+      answerOptions.className = "answer-options";
+
+      // Create radio buttons for each answer option
+      question.options.forEach((option) => {
+        const label = document.createElement("label");
+        label.className = "answer-option";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "question";
+        input.value = option.id;
+
+        const span = document.createElement("span");
+        span.textContent = `${option.id}. ${option.text}`;
+
+        label.appendChild(input);
+        label.appendChild(span);
+        answerOptions.appendChild(label);
+      });
+
+      questionElement.appendChild(answerOptions);
+      testContent.appendChild(questionElement);
+
+      // Store the correct answer in a data attribute (optional)
+      testContent.dataset.correctAnswer = JSON.stringify(
+        question.correct_answer
+      );
+
+      console.log("Question displayed:", question);
+    }
+
+    // Updated version of closeTestModal to reset the form
+    function closeTestModal() {
+      document.getElementById("test-modal-container").style.display = "none";
+      // Reset the form if needed
+      document.getElementById("test-content").innerHTML = "";
+    }
+
+    document
+      .getElementById("next-question")
+      .addEventListener("click", function () {
+        // This would be replaced with actual logic to navigate to the next question
+        //alert("Navigate to next question");
+      });
+
+    document
+      .getElementById("prev-question")
+      .addEventListener("click", function () {
+        // Exit the modal when clicking the "Ieșire" button
+        closeTestModal();
+      });
+  </script>
+</html>
+

@@ -1,0 +1,14 @@
+Test: TrueFalse on Inequality
+Number of questions: 5
+
+----------------------------------------
+
+1. The standard of living in a society is primarily determined by the average level of consumption or income. (False) - We are concerned not simply with the average, but also its distribution among households.
+
+2. A society with a higher average income but greater inequality enjoys a lower standard of living compared to one with a lower average income but less inequality. (False) - The answer depends on a value-based judgement and there is often a trade-off between level and inequality, so the answer depends on how large the differences are.
+
+3. The economic boom of the past 20 years has not affected income distribution significantly. (False) - Discussion about its effect on income distribution suggests that the share of total income going to the highest income groups increased dramatically during this period.
+
+4. Evidently, the economic boom raised both the average income and the inequality of distribution, but it is better to have a higher average even if it means greater inequality because it is only temporary. (False) - The text does not state that the greater inequality is only temporary, related to the boom.
+
+5. Income inequality is a topic that will occupy decreasing attention in the years ahead. (False) - There is no doubt that it will occupy increasing attention in the years ahead.
