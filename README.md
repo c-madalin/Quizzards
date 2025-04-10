@@ -1,17 +1,15 @@
 # Quizzard
 
-![Quizzard Logo](https://github.com/user-attachments/assets/63050fd4-2a53-4a5a-9586-430190da14c8)
-![Quizzard Interface](https://github.com/user-attachments/assets/632ef62c-2ba9-4f26-8527-aff995181ecf)
 
 ## About Quizzard
 
 Quizzard is an intelligent educational platform developed during the CodeStorm Hackathon at UNITVB University. The platform leverages AI to revolutionize how students study and how teachers create educational materials.
 
-### Team CodeStorm
-- Madalin
-- Alin
-- Costin
-- Marian
+### Team 
+- [Madalin](https://github.com/c-madalin) 
+- [Alin](https://github.com/AlecsaAlin)  
+- [Costin](https://github.com/coxteen)
+- [Marian](https://github.com/popaiulian1)
 
 ## 🚀 Features
 
@@ -26,6 +24,10 @@ Teachers can quickly generate custom quizzes based on specific topics, choosing 
 - Multiple choice questions
 - Single choice questions
 - True/False questions
+
+## Preview
+
+![Quizzard Logo](https://github.com/user-attachments/assets/63050fd4-2a53-4a5a-9586-430190da14c8)
 
 ## 🛠️ Technology Stack
 
@@ -70,10 +72,5 @@ Our solution brings advanced AI capabilities into the classroom in an accessible
 - Python 3.8+
 - Flask
 - Ollama (running locally)
-
-### Installation
-
-1. Clone the repository
-```bash
-git clone https://github.com/yourusername/quizzard.git
-cd quizzard
+  
+![Quizzard Interface](https://github.com/user-attachments/assets/632ef62c-2ba9-4f26-8527-aff995181ecf)
